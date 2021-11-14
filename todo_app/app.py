@@ -11,7 +11,7 @@ def index():
     all_items = get_items()
     return render_template('index.html', all_items = all_items)
 
-@app.route('/add-item', methods=["GET", "POST"])
+@app.route('/add-item', methods=["POST"])
 def new_item():
     title = request.form.get('title')
     add_item(title)
