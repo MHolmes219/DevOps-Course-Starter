@@ -53,6 +53,20 @@ def add_item(title):
 
     return item
 
+# TODO: Finish definition function
+def remove_item(item):
+
+    existing_items = get_items()
+
+    # Remove the item from the list
+    existing_items.remove(item)
+
+    updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
+    
+    session['items'] = updated_items
+
+    return item
+
 
 def save_item(item):
     """
@@ -62,6 +76,7 @@ def save_item(item):
         item: The item to save.
     """
     existing_items = get_items()
+
     updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
 
     session['items'] = updated_items

@@ -7,16 +7,35 @@
     <p class="lead">Just another to-do app.</p>
   </div>
 
+  {% if request.endpoint == 'index' %}
   <div class="row">
-    <div class="col-md-12">
+    <!-- Display all list items -->
+    <div class="col-md-12 mb-5">
       <h2>Items</h2>
       <ul class="list-group mb-4">
+        {% if all_items is iterable and all_items|length == 0 %}
+        <li class="list-group-item">No to-do items</li>
+        {% endif %}
         {% for item in all_items %}
-        <li>{{ item.title }}</li>
+        <li class="list-group-item d-flex align-items-center justify-content-between">
+          <a href="/view-item/{{ item.id }}">
+            {% if item.status == 'Completed' %}
+            <del>{{ item.title }} - {{ item.status }}</del>
+            {% else %}
+            {{ item.title }} - {{ item.status }}
+            {% endif %}
+          </a>
+          <form id="remove-item" method="post" action="/remove-item/{{ item.id }}">
+            <button type="submit" class="btn btn-sm">&times;</button>
+          </form>
+        </li>
         {% endfor %}
       </ul>
     </div>
-    <div class="col-md-6">
+  </div>
+  {% endif %}
+  <div class="row fixed-bottom py-2 bg-light border-top">
+    <div class="container">
       <form id="new-item" method="post" action="/add-item">
         <div class="input-group">
           <input type="text" name="title" id="title" class="form-control" placeholder="Item title">
@@ -26,5 +45,31 @@
         </div>
       </form>
     </div>
+  </div>
+
+    <!-- View single item -->
+  <div class="row">
+    {% if request.endpoint == 'view_item' %}
+    <div class="col-md-12">
+      <h2>View item</h2>
+        <ul class="list-group mb-4">
+          <li class="list-group-item">
+            {% if item.status == 'Completed' %}
+            <del>{{ item.title }}</del>
+            {% else %}
+            {{ item.title }}
+            {% endif %}
+          </li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+      <a href="/" class="btn btn-link">&larr; Go back</a>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      <form id="complete-item" method="post" action="/complete-item/{{ item.id }}">
+        <button type="submit" class="btn btn-primary">Complete item</button>
+      </form>
+    </div>
+    {% endif %}
   </div>
 {% endblock %}
