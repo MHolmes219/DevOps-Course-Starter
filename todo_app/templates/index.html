@@ -55,11 +55,7 @@
       <h2>View item</h2>
         <ul class="list-group mb-4">
           <li class="list-group-item">
-            {% if item.status == 'Completed' %}
-            <del>{{ item.title }}</del>
-            {% else %}
             {{ item.title }}
-            {% endif %}
           </li>
         </ul>
     </div>
