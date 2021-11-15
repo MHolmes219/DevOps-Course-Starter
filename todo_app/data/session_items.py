@@ -53,9 +53,14 @@ def add_item(title):
 
     return item
 
-# TODO: Finish definition function
-def remove_item(item):
 
+def remove_item(item):
+    """
+    Removes a single item from the session.
+
+    Args:
+        item: The item to remove.
+    """
     existing_items = get_items()
 
     # Remove the item from the list

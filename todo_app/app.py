@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from todo_app.data.session_items import get_items, add_item, get_item, save_item
+from todo_app.data.session_items import get_items, add_item, get_item, save_item, remove_item
 from todo_app.flask_config import Config
 from operator import itemgetter
 
@@ -27,7 +27,7 @@ def new_item():
 
 
 # View individual item using item id
-@app.route('/view-item/<int:id>')
+@app.route('/view-item/<id>')
 def view_item(id):
     view_item = get_item(id)
 
@@ -35,7 +35,7 @@ def view_item(id):
 
 
 # Update item status to completed
-@app.route('/complete-item/<int:id>', methods=["POST"])
+@app.route('/complete-item/<id>', methods=["POST"])
 def complete_item(id):
 
     current_item = get_item(id)
@@ -48,13 +48,11 @@ def complete_item(id):
 
 
 # Remove item from list
-@app.route('/remove-item/<int:id>', methods=["POST"])
-def remove_item(id):
+@app.route('/remove-item/<id>', methods=["POST"])
+def delete_item(id):
 
     current_item = get_item(id)
-    current_list = get_items()
 
-    current_list.remove(current_item)
-    session['items'] = current_list
+    remove_item(current_item)
 
     return redirect(url_for('index'))
