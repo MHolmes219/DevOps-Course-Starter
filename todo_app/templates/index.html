@@ -20,13 +20,14 @@
         <li class="list-group-item d-flex align-items-center justify-content-between">
           <a href="/view-item/{{ item.id }}">
             {% if item.status == 'Completed' %}
-            <del>{{ item.title }} - {{ item.status }}</del>
+            <del>{{ item.title }}</del>
             {% else %}
-            {{ item.title }} - {{ item.status }}
+            {{ item.title }}
             {% endif %}
           </a>
           <form id="remove-item" method="post" action="/remove-item/{{ item.id }}">
-            <button type="submit" class="btn btn-sm">&times;</button>
+            <span class="badge {{ 'badge-success' if item.status == 'Completed' else 'badge-secondary' }}">{{ item.status }}</span>
+            <button type="submit" class="btn btn-sm" data-toggle="tooltip" data-placement="right" title="Remove item?">&times;</button>
           </form>
         </li>
         {% endfor %}
