@@ -5,7 +5,6 @@ from todo_app.flask_config import Config
 app = Flask(__name__)
 app.config.from_object(Config())
 
-
 # Define the index page and display all sorted cards
 @app.route('/')
 def index():
@@ -19,7 +18,9 @@ def index():
 @app.route('/add-card', methods=["POST"])
 def new_card():
     name = request.form.get('name')
-    trello.add_card(name)
+    desc = request.form.get('desc')
+    due = request.form.get('due-date')
+    trello.add_card(name, desc, due)
 
     return redirect(url_for('index')) 
 

@@ -1,5 +1,7 @@
 import requests
 from flask import current_app as app
+import dateutil.parser
+from datetime import datetime
 
 def get_auth_params():
     return { 'key': app.config['API_KEY'], 'token': app.config['API_TOKEN'] }
@@ -14,14 +16,16 @@ def build_params(params = {}):
 
 class Item:
 
-    def __init__(self, id, name, status = 'To Do'):
+    def __init__(self, id, name, description = '', due = '', status = 'To Do'):
         self.id = id
         self.name = name
+        self.description = description
+        self.due = due
         self.status = status
 
     @classmethod
     def from_trello_card(cls, card, list):
-        return cls(card['id'], card['name'], list['name'])
+        return cls(card['id'], card['name'], card['desc'], card['due'], list['name'])
         
 
 def get_lists():
@@ -81,7 +85,7 @@ def get_card(cardId):
     return singleCard
 
 
-def add_card(cardName):
+def add_card(cardName, cardDesc, cardDue):
     """
     Adds a new card with the specified name.
 
@@ -90,7 +94,7 @@ def add_card(cardName):
     """
     todo_list = get_list('To Do')
 
-    params = build_params({ 'name': cardName, 'idList': todo_list['id'] })
+    params = build_params({ 'name': cardName, 'desc': cardDesc, 'due': cardDue, 'idList': todo_list['id'] })
     url = build_url('/cards')
 
     response = requests.post(url, params = params)

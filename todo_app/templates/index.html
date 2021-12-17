@@ -21,7 +21,10 @@
           {% for card in allCards if allCards is iterable %}
             <li class="list-group-item d-flex align-items-center justify-content-between">
               <a href="/view-card/{{ card.id }}">
-                {{ card.name }}
+                <h5 class="card-title mb-0">{{ card.name }}</h5>
+                {% if card.description %}
+                <h6 class="card-subtitle font-weight-normal text-muted mt-2">{{ card.description }}</h6>
+                {% endif %}
               </a>
               {% if card.status == 'Done' %}
                 {% set badge_style = 'badge-success' %}
@@ -30,7 +33,7 @@
               {% else %}
                 {% set badge_style = 'badge-primary' %}
               {% endif %}
-              <span class="badge mr-3 ml-auto {{ badge_style }}">{{ card.status }}</span>
+              <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ card.status }}{{ ' | Due: ' + card.due if card.due else '' }}</span>
               {% if card.status == 'To Do' %}
               <form id="start-card" method="post" action="/start-card/{{ card.id }}">
                 <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Mark as in progress?"><i class="bi bi-patch-plus"></i></button>
@@ -54,6 +57,8 @@
       <form id="new-card" method="post" action="/add-card">
         <div class="input-group">
           <input type="text" name="name" id="name" class="form-control" required placeholder="Card name">
+          <input type="text" name="desc" id="desc" class="form-control" required placeholder="Card description">
+          <input type="text" name="due-date" id="due-date" class="form-control" placeholder="Due date" data-provide="datepicker">
           <div class="input-group-append">
             <button type="submit" class="btn btn-primary">Create card</button>
           </div>
@@ -71,7 +76,8 @@
       <h2>View card</h2>
         <ul class="list-group mb-4">
           <li class="list-group-item">
-            {{ c.name }}
+            <h5 class="card-title">{{ c.name }}</h5>
+            <h6 class="card-subtitle font-weight-normal text-muted">{{ c.description }}</h6>
           </li>
         </ul>
     </div>
