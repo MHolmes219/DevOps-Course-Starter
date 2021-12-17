@@ -9,38 +9,53 @@
 
   {% if request.endpoint == 'index' %}
   <div class="row">
-    <!-- Display all list items -->
+    <!-- Display all list cards -->
     <div class="col-md-12 mb-5">
-      <h2>Items</h2>
-      <ul class="list-group mb-4">
-        {% if all_items is iterable and all_items|length == 0 %}
-        <li class="list-group-item">No to-do items</li>
+      <h2>Cards</h2>
+        {% if allCards is iterable and allCards|length == 0 %}
+          <ul class="list-group mb-4"></ul>
+            <li class="list-group-item">No to-do cards</li>
+          </ul>
         {% endif %}
-        {% for item in all_items %}
-        <li class="list-group-item d-flex align-items-center justify-content-between">
-          <a href="/view-item/{{ item.id }}">
-            {% if item.status == 'Completed' %}
-            <del>{{ item.title }}</del>
-            {% else %}
-            {{ item.title }}
-            {% endif %}
-          </a>
-          <form id="remove-item" method="post" action="/remove-item/{{ item.id }}">
-            <span class="badge {{ 'badge-success' if item.status == 'Completed' else 'badge-secondary' }}">{{ item.status }}</span>
-            <button type="submit" class="btn btn-sm" data-toggle="tooltip" data-placement="right" title="Remove item?">&times;</button>
-          </form>
-        </li>
-        {% endfor %}
-      </ul>
+        <ul class="list-group list-group-flush mb-4">
+          {% for card in allCards if allCards is iterable %}
+            <li class="list-group-item d-flex align-items-center justify-content-between">
+              <a href="/view-card/{{ card.id }}">
+                {{ card.name }}
+              </a>
+              {% if card.status == 'Done' %}
+                {% set badge_style = 'badge-success' %}
+              {% elif card.status == 'To Do' %}
+                {% set badge_style = 'badge-secondary' %}
+              {% else %}
+                {% set badge_style = 'badge-primary' %}
+              {% endif %}
+              <span class="badge mr-3 ml-auto {{ badge_style }}">{{ card.status }}</span>
+              {% if card.status == 'To Do' %}
+              <form id="start-card" method="post" action="/start-card/{{ card.id }}">
+                <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Mark as in progress?"><i class="bi bi-patch-plus"></i></button>
+              </form>
+              {% elif card.status == 'In Progress' %}
+              <form id="complete-card" method="post" action="/complete-card/{{ card.id }}">
+                <button type="submit" class="btn btn-link btn-lg"><i class="bi bi-patch-plus-fill" data-toggle="tooltip" data-placement="right" title="Mark as complete?"></i></button>
+              </form>
+              {% else %}
+              <form id="remove-card" method="post" action="/undo-card/{{ card.id }}">
+                <button type="submit" class="btn btn-link btn-lg"><i class="bi bi-arrow-counterclockwise" data-toggle="tooltip" data-placement="right" title="Mark as to-do?"></i></button>
+              </form>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
     </div>
   </div>
   <div class="row fixed-bottom py-2 bg-light border-top">
     <div class="container">
-      <form id="new-item" method="post" action="/add-item">
+      <form id="new-card" method="post" action="/add-card">
         <div class="input-group">
-          <input type="text" name="title" id="title" class="form-control" required placeholder="Item title">
+          <input type="text" name="name" id="name" class="form-control" required placeholder="Card name">
           <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">Create item</button>
+            <button type="submit" class="btn btn-primary">Create card</button>
           </div>
         </div>
       </form>
@@ -48,14 +63,15 @@
   </div>
   {% endif %}
 
-    <!-- View single item -->
+  <!-- View single card -->
   <div class="row">
-    {% if request.endpoint == 'view_item' %}
+    {% if request.endpoint == 'view_card' %}
+    {% for c in card %}
     <div class="col-md-12">
-      <h2>View item</h2>
+      <h2>View card</h2>
         <ul class="list-group mb-4">
           <li class="list-group-item">
-            {{ item.title }}
+            {{ c.name }}
           </li>
         </ul>
     </div>
@@ -63,10 +79,17 @@
       <a href="/" class="btn btn-link">&larr; Go back</a>
     </div>
     <div class="col-md-6 d-flex justify-content-end">
-      <form id="complete-item" method="post" action="/complete-item/{{ item.id }}">
-        <button type="submit" class="btn btn-primary">Complete item</button>
+      {% if c.status == 'To Do' or c.status == 'Complete' %}
+      <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c.id }}">
+        <button type="submit" class="btn btn-secondary">Mark as in progress</button>
       </form>
+      {% else %}
+      <form id="complete-card" method="post" action="/complete-card/{{ c.id }}">
+        <button type="submit" class="btn btn-primary">Mark as complete</button>
+      </form>
+      {% endif %}
     </div>
+    {% endfor %}
     {% endif %}
   </div>
 {% endblock %}

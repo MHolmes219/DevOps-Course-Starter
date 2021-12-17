@@ -30,6 +30,13 @@ You'll also need to clone a new `.env` file from the `.env.template` to store lo
 $ cp .env.template .env  # (first time only)
 ```
 
+## Trello pre-steps
+* Setup a new Trello account if you don't have one already.
+* Visit https://trello.com/app-key to generate a new api key.
+* Once done, you will need to take that key and add in to your .env file in the API_KEY value.
+* Click the Token link on the page where you generated your new API key in order to generate an access token. Add this value as the API_TOKEN in your .env file.
+* Visit your trello board and add `.json` to the end of the URL to view the board in json. Take the very top `id` value and add that to your .env file in the BOARD_ID value.
+
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
 ## Running the App
