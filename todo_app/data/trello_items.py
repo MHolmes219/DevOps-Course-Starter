@@ -1,16 +1,14 @@
 import requests
 from flask import current_app as app
-import dateutil.parser
-from datetime import datetime
 
-def get_auth_params():
+def __get_auth_params():
     return { 'key': app.config['API_KEY'], 'token': app.config['API_TOKEN'] }
 
-def build_url(endpoint):
+def __build_url(endpoint):
     return app.config['BASE_URL'] + endpoint
 
-def build_params(params = {}):
-    full_params = get_auth_params()
+def __build_params(params = {}):
+    full_params = __get_auth_params()
     full_params.update(params)
     return full_params
 
@@ -34,8 +32,8 @@ def get_lists():
     Returns:
         list: The list of board lists (To Do, In Progress, Done, etc)
     """
-    params = build_params({ 'cards': 'open' })
-    url = build_url('/boards/%s/lists' % app.config['BOARD_ID'])
+    params = __build_params({ 'cards': 'open' })
+    url = __build_url('/boards/%s/lists' % app.config['BOARD_ID'])
 
     allLists = requests.get(url, params = params).json()
 
@@ -94,8 +92,8 @@ def add_card(cardName, cardDesc, cardDue):
     """
     todo_list = get_list('To Do')
 
-    params = build_params({ 'name': cardName, 'desc': cardDesc, 'due': cardDue, 'idList': todo_list['id'] })
-    url = build_url('/cards')
+    params = __build_params({ 'name': cardName, 'desc': cardDesc, 'due': cardDue, 'idList': todo_list['id'] })
+    url = __build_url('/cards')
 
     response = requests.post(url, params = params)
     card = response.json()
@@ -153,7 +151,7 @@ def archive_card(cardId):
         card: The card to archive.
     """
     completed_list = get_list('Done')
-    card = update_card_status(cardId, completed_list)
+    card = close_and_move_card(cardId, completed_list)
 
     return Item.from_trello_card(card, completed_list)
 
@@ -167,8 +165,8 @@ def update_card_list(cardId, list):
     Returns: 
         card: The updated card, in the new specified list
     """
-    params = build_params({ 'idList': list['id'] })
-    url = build_url('/cards/%s' % cardId)
+    params = __build_params({ 'idList': list['id'] })
+    url = __build_url('/cards/%s' % cardId)
 
     response = requests.put(url, params = params)
     card = response.json()
@@ -176,7 +174,7 @@ def update_card_list(cardId, list):
     return card
 
 
-def update_card_status(cardId, list):
+def close_and_move_card(cardId, list):
     """
     Runs a put request to archive (close) a card
     Args:
@@ -185,8 +183,8 @@ def update_card_status(cardId, list):
     Returns:
         card: The updated card with closed = true
     """
-    params = build_params({'closed': 'true', 'idList': list['id']})
-    url = build_url('/cards/%s' % cardId)
+    params = __build_params({'closed': 'true', 'idList': list['id']})
+    url = __build_url('/cards/%s' % cardId)
 
     response = requests.put(url, params = params)
     card = response.json()

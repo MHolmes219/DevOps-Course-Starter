@@ -93,7 +93,7 @@
         <button type="submit" class="btn btn-secondary">Mark as in progress</button>
       </form>
       <form class="mr-3" id="archive-card" method="post" action="/archive-card/{{ c.id }}">
-        <button type="submit" class="btn btn-secondary">Archive</button>
+        <button type="submit" class="btn btn-outline-info">Archive</button>
       </form>
       {% else %}
       <form id="complete-card" method="post" action="/complete-card/{{ c.id }}">
