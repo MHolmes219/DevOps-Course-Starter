@@ -56,5 +56,14 @@ def undo_card(cardId):
 
     return redirect(url_for('index'))
 
+
+# Archive card
+@app.route('/archive-card/<cardId>', methods=["POST"])
+def archive_card(cardId):
+    trello.archive_card(cardId)
+
+    return redirect(url_for('index'))
+    
+
 if __name__ == '__main__':
     app.run()

@@ -145,6 +145,19 @@ def undo_card(cardId):
     return Item.from_trello_card(card, todo_list)
 
 
+def archive_card(cardId):
+    """
+    Updates an existing card in the session. If no existing card matches the ID of the specified card, nothing is archived.
+
+    Args:
+        card: The card to archive.
+    """
+    completed_list = get_list('Done')
+    card = update_card_status(cardId, completed_list)
+
+    return Item.from_trello_card(card, completed_list)
+
+
 def update_card_list(cardId, list):
     """
     Runs a put request to update the card list
@@ -160,4 +173,22 @@ def update_card_list(cardId, list):
     response = requests.put(url, params = params)
     card = response.json()
 
+    return card
+
+
+def update_card_status(cardId, list):
+    """
+    Runs a put request to archive (close) a card
+    Args:
+        cardId: The ID of the card to be updated
+        list: The list object to use for the new list
+    Returns:
+        card: The updated card with closed = true
+    """
+    params = build_params({'closed': 'true', 'idList': list['id']})
+    url = build_url('/cards/%s' % cardId)
+
+    response = requests.put(url, params = params)
+    card = response.json()
+    
     return card

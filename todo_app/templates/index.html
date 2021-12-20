@@ -34,6 +34,9 @@
                 {% set badge_style = 'badge-primary' %}
               {% endif %}
               <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ card.status }}{{ ' | Due: ' + card.due if card.due else '' }}</span>
+              <form id="archive-card" method="post" action="/archive-card/{{ card.id }}">
+                <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Archive?"><i class="bi bi-x-circle"></i></button>
+              </form>
               {% if card.status == 'To Do' %}
               <form id="start-card" method="post" action="/start-card/{{ card.id }}">
                 <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Mark as in progress?"><i class="bi bi-patch-plus"></i></button>
@@ -88,6 +91,9 @@
       {% if c.status == 'To Do' or c.status == 'Complete' %}
       <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c.id }}">
         <button type="submit" class="btn btn-secondary">Mark as in progress</button>
+      </form>
+      <form class="mr-3" id="archive-card" method="post" action="/archive-card/{{ c.id }}">
+        <button type="submit" class="btn btn-secondary">Archive</button>
       </form>
       {% else %}
       <form id="complete-card" method="post" action="/complete-card/{{ c.id }}">
