@@ -57,3 +57,16 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Running tests
+
+In order to run tests, you will need to install pytest using `pip install pytest`. You can then run all of your tests in your terminal, with optional verbosity to check output:
+```bash
+pytest tests -vv
+```
+You can also run individual tests by specifying the test name, like so:
+```bash
+pytest tests/test_view_model.py -k 'test_return_to_do_items'
+```
+
+If you're in VSCode, you can also install Test Explorer which will allow you to find relevant tests and provide you output & debug mode to adding in breakpoints for testing steps of your methods.
