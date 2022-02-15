@@ -1,5 +1,7 @@
 import requests
 from flask import current_app as app
+from datetime import date
+import datetime
 
 def __get_auth_params():
     return { 'key': app.config['API_KEY'], 'token': app.config['API_TOKEN'] }
@@ -12,18 +14,28 @@ def __build_params(params = {}):
     full_params.update(params)
     return full_params
 
+
 class Item:
 
-    def __init__(self, id, name, description = '', due = '', status = 'To Do'):
+    def __init__(self, id, name, last_modified, description = '', due = '', status = 'To Do'):
         self.id = id
         self.name = name
+        unformatted_last_modified = datetime.datetime.strptime(last_modified, "%Y-%m-%dT%H:%M:%S.%fZ")
+        self.last_modified = datetime.datetime.strftime(unformatted_last_modified, "%Y-%m-%d")
         self.description = description
         self.due = due
         self.status = status
 
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name
+
     @classmethod
     def from_trello_card(cls, card, list):
-        return cls(card['id'], card['name'], card['desc'], card['due'], list['name'])
+        return cls(card['id'], card['name'], card['dateLastActivity'], card['desc'], card['due'], list['name'])
+
+    def modified_today(self):
+        today = date.today()
+        return self.last_modified == today.strftime("%Y-%m-%d")
         
 
 def get_lists():

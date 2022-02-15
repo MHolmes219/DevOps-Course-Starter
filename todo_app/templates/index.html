@@ -1,4 +1,61 @@
 {% extends "layout.html" %}
+
+{% macro show_item(item) -%}
+<li class="list-group-item d-flex align-items-center justify-content-between">
+  <a href="/view-card/{{ item.id }}">
+    <h5 class="card-title mb-0">{{ item.name }}</h5>
+    {% if item.description %}
+    <h6 class="card-subtitle font-weight-normal text-muted mt-2">{{ item.description }}</h6>
+    {% endif %}
+  </a>
+
+  {% if item.status == 'Done' %}
+    {% set badge_style = 'badge-success' %}
+  {% elif item.status == 'To Do' %}
+    {% set badge_style = 'badge-secondary' %}
+  {% else %}
+    {% set badge_style = 'badge-primary' %}
+  {% endif %}
+
+  <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ item.status }}{{ ' | Due: ' + item.due | formatted_time if item.due else '' }}</span>
+  {% if item.status == 'Done' %}
+  <form id="remove-card" method="post" action="/undo-card/{{ item.id }}">
+    <button type="submit" class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="right" title="Mark as to-do?">Start over</button>
+  </form>
+  {% elif item.status == 'To Do' %}
+    <form id="start-card" method="post" action="/start-card/{{ item.id }}">
+      <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="right" title="Mark as in progress?">Start</button>
+    </form>
+  {% else %}
+  <form id="complete-card" method="post" action="/complete-card/{{ item.id }}">
+    <button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="right" title="Mark as complete?">Complete</button>
+  </form>
+  {% endif %}
+  <form id="archive-card" method="post" action="/archive-card/{{ item.id }}">
+    <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Archive?"><i class="bi bi-x-circle"></i></button>
+  </form>
+</li>
+{%- endmacro %}
+
+{% macro show_item_list(title, items, section_id) -%}
+<div class="row">
+  <div class="col-md-12" id="{{ section_id }}">
+    <h2>{{ title }}</h2>
+    {% if items is iterable and items|length == 0 %}
+    <ul class="list-group mb-5">
+      <li class="list-group-item">No items</li>
+    </ul>
+    {% else %}
+    <ul class="list-group list-group-flush mb-5">
+      {% for item in items if items is iterable %}
+        {{ show_item(item) }}
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{%- endmacro %}
+
 {% block title %}To-Do App{% endblock %}
 
 {% block content %}
@@ -7,56 +64,9 @@
     <p class="lead">Just another to-do app.</p>
   </div>
 
-  {% if request.endpoint == 'index' %}
-  <div class="row">
-    <!-- Display all list cards -->
-    <div class="col-md-12 mb-5">
-      <h2>Cards</h2>
-        {% if allCards is iterable and allCards|length == 0 %}
-          <ul class="list-group mb-4"></ul>
-            <li class="list-group-item">No to-do cards</li>
-          </ul>
-        {% endif %}
-        <ul class="list-group list-group-flush mb-4">
-          {% for card in allCards if allCards is iterable %}
-            <li class="list-group-item d-flex align-items-center justify-content-between">
-              <a href="/view-card/{{ card.id }}">
-                <h5 class="card-title mb-0">{{ card.name }}</h5>
-                {% if card.description %}
-                <h6 class="card-subtitle font-weight-normal text-muted mt-2">{{ card.description }}</h6>
-                {% endif %}
-              </a>
-              {% if card.status == 'Done' %}
-                {% set badge_style = 'badge-success' %}
-              {% elif card.status == 'To Do' %}
-                {% set badge_style = 'badge-secondary' %}
-              {% else %}
-                {% set badge_style = 'badge-primary' %}
-              {% endif %}
-              <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ card.status }}{{ ' | Due: ' + card.due if card.due else '' }}</span>
-              <form id="archive-card" method="post" action="/archive-card/{{ card.id }}">
-                <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Archive?"><i class="bi bi-x-circle"></i></button>
-              </form>
-              {% if card.status == 'To Do' %}
-              <form id="start-card" method="post" action="/start-card/{{ card.id }}">
-                <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Mark as in progress?"><i class="bi bi-patch-plus"></i></button>
-              </form>
-              {% elif card.status == 'In Progress' %}
-              <form id="complete-card" method="post" action="/complete-card/{{ card.id }}">
-                <button type="submit" class="btn btn-link btn-lg"><i class="bi bi-patch-plus-fill" data-toggle="tooltip" data-placement="right" title="Mark as complete?"></i></button>
-              </form>
-              {% else %}
-              <form id="remove-card" method="post" action="/undo-card/{{ card.id }}">
-                <button type="submit" class="btn btn-link btn-lg"><i class="bi bi-arrow-counterclockwise" data-toggle="tooltip" data-placement="right" title="Mark as to-do?"></i></button>
-              </form>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-    </div>
-  </div>
-  <div class="row fixed-bottom py-2 bg-light border-top">
+  <div class="row py-3 mx-0 mb-4 bg-light border-top border-bottom">
     <div class="container">
+      <h5>Add a new card</h5>
       <form id="new-card" method="post" action="/add-card">
         <div class="input-group">
           <input type="text" name="name" id="name" class="form-control" required placeholder="Card name">
@@ -69,39 +79,18 @@
       </form>
     </div>
   </div>
-  {% endif %}
+  
+  {{ show_item_list('To Do', view_model.to_do_items, 'to-do-section') }}
+  {{ show_item_list('In Progress', view_model.in_progress_items, 'in-progress-section') }}
 
-  <!-- View single card -->
-  <div class="row">
-    {% if request.endpoint == 'view_card' %}
-    {% for c in card %}
-    <div class="col-md-12">
-      <h2>View card</h2>
-        <ul class="list-group mb-4">
-          <li class="list-group-item">
-            <h5 class="card-title">{{ c.name }}</h5>
-            <h6 class="card-subtitle font-weight-normal text-muted">{{ c.description }}</h6>
-          </li>
-        </ul>
-    </div>
-    <div class="col-md-6">
-      <a href="/" class="btn btn-link">&larr; Go back</a>
-    </div>
-    <div class="col-md-6 d-flex justify-content-end">
-      {% if c.status == 'To Do' or c.status == 'Complete' %}
-      <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c.id }}">
-        <button type="submit" class="btn btn-secondary">Mark as in progress</button>
-      </form>
-      <form class="mr-3" id="archive-card" method="post" action="/archive-card/{{ c.id }}">
-        <button type="submit" class="btn btn-outline-info">Archive</button>
-      </form>
-      {% else %}
-      <form id="complete-card" method="post" action="/complete-card/{{ c.id }}">
-        <button type="submit" class="btn btn-primary">Mark as complete</button>
-      </form>
-      {% endif %}
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
+  {% if view_model.should_show_all_done_items %}
+    {{ show_item_list('Done', view_model.done_items, 'done-section') }}
+  {% else %}
+    {{ show_item_list('Recently Completed', view_model.recent_done_items, 'recently-done-section') }}
+    <details class="mb-5">
+      {{ show_item_list('', view_model.older_done_items, 'older-done-section') }}
+      <summary>Show older items</summary>
+    </details>
+  {% endif %}
+  
 {% endblock %}

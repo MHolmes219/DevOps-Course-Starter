@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}To-Do App{% endblock %}
+
+{% block content %}
+
+<!-- View single card -->
+<div class="row">
+    {% if request.endpoint == 'view_card' %}
+    {% for c in card %}
+    <div class="col-md-12">
+      <h2>View card</h2>
+        <ul class="list-group mb-4">
+          <li class="list-group-item">
+            <h5 class="card-title">{{ c.name }}</h5>
+            {% if c.description %}
+              <h6 class="card-subtitle font-weight-normal text-muted">{{ c.description }}</h6>
+            {% endif %}
+          </li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+      <a href="/" class="btn btn-link">&larr; Go back</a>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      {% if c.status == 'To Do' or c.status == 'Complete' %}
+      <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c.id }}">
+        <button type="submit" class="btn btn-secondary">Mark as in progress</button>
+      </form>
+      <form class="mr-3" id="archive-card" method="post" action="/archive-card/{{ c.id }}">
+        <button type="submit" class="btn btn-outline-info">Archive</button>
+      </form>
+      {% else %}
+      <form id="complete-card" method="post" action="/complete-card/{{ c.id }}">
+        <button type="submit" class="btn btn-primary">Mark as complete</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  
+{% endblock %}
