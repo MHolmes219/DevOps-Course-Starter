@@ -118,5 +118,3 @@ env/
 
 ### Configuration files ###
 .env
-
-poetry.lock
