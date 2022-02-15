@@ -37,7 +37,7 @@ def create_app():
     def view_card(cardId):
         card = trello.get_card(cardId)
 
-        return render_template('index.html', card = card)
+        return render_template('view_card.html', card = card)
 
 
     # Update card status to In Progress

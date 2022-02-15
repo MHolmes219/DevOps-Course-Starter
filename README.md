@@ -60,7 +60,7 @@ Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser
 
 ## Running tests
 
-In order to run tests, you will need to install pytest using `pip install pytest`. You can then run all of your tests in your terminal, with optional verbosity to check output:
+Pytest is added as part of the poetry toml dependencies, allowing you to then run `poetry install` and use within the virtual environment as a dev dependency. You can then run all of your tests in your terminal, with optional verbosity to check output:
 ```bash
 pytest tests -vv
 ```
