@@ -1,0 +1,48 @@
+- name: Create directory for app
+  file:
+    name: /opt/todoapp
+    state: directory
+    owner: ec2-user
+    group: ec2-user
+    mode: '755'
+
+- name: Download to-do app from github
+  git:
+    repo: 'https://github.com/MHolmes219/DevOps-Course-Starter.git'
+    dest: /opt/todoapp
+    force: yes
+
+- name: Update todoapp permissions
+  command:
+    cmd: chown -R ec2-user:ec2-user /opt/todoapp
+
+- name: Add gunicorn with poetry
+  shell:
+    cmd: poetry add gunicorn
+  args:
+    chdir: /opt/todoapp
+  become: false
+
+- name: Run poetry install
+  shell:
+    cmd: poetry install
+  args:
+    chdir: /opt/todoapp
+  become: false
+
+- name: Create .env file
+  template:
+    src: templates/.env.j2
+    dest: /opt/todoapp/.env
+    owner: ec2-user
+    group: ec2-user
+    mode: '644'
+
+- name: Create todo app service
+  template:
+    src: templates/todoapp.service.j2
+    dest: /etc/systemd/system/todoapp.service
+    mode: '644'
+    owner: root
+    group: root
+  notify: enable_todo_service

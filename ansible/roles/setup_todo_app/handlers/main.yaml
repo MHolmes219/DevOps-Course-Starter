@@ -1,0 +1,6 @@
+- name: enable_todo_service
+  systemd:
+    name: todoapp
+    state: started
+    enabled: yes
+    daemon_reload: yes
