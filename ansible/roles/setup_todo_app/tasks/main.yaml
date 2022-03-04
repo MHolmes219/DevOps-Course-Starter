@@ -6,11 +6,17 @@
     group: ec2-user
     mode: '755'
 
+- name: Check if /opt/todoapp is empty
+  find:
+    paths: /opt/todoapp
+    file_type: directory
+  register: files
+
 - name: Download to-do app from github
   git:
     repo: 'https://github.com/MHolmes219/DevOps-Course-Starter.git'
     dest: /opt/todoapp
-    force: yes
+  when: not files.files
 
 - name: Update todoapp permissions
   command:
