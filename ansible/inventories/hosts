@@ -1,0 +1,2 @@
+[workers]
+worker_node ansible_host=3.9.100.86

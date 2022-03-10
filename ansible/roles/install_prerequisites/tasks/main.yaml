@@ -1,0 +1,15 @@
+- name: Install git & python3
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - git
+    - python3
+
+- name: Install poetry
+  shell:
+    cmd: curl -sSL https://install.python-poetry.org | python3 -
+    creates: /usr/local/bin/poetry
+  register: install_poetry
+  changed_when: install_poetry.changed

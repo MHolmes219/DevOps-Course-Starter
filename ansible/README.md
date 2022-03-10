@@ -1,0 +1,1 @@
+ansible-playbook --ssh-common-args "-o ProxyJump=ec2-user@35.179.66.143" -i inventories/hosts playbooks/main.yaml --ask-vault-pass -u ec2-user

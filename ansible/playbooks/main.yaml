@@ -1,0 +1,10 @@
+---
+
+- name: Install to-do app
+  hosts: all
+  order: sorted
+  environment:
+    POETRY_HOME: /usr/local
+  roles:
+    - role: install_prerequisites
+    - role: setup_todo_app
