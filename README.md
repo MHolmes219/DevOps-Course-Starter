@@ -70,3 +70,26 @@ pytest tests/test_view_model.py -k 'test_return_to_do_items'
 ```
 
 If you're in VSCode, you can also install Test Explorer which will allow you to find relevant tests and provide you output & debug mode to adding in breakpoints for testing steps of your methods.
+
+
+# Build & run Docker
+
+1. Development
+`docker build --target development --platform linux/amd64 --tag todo-app:dev .`
+`docker run --env-file ./.env -p 127.0.0.1:5000:5000 -v "$(pwd)"/todo_app:/app/todo_app todo-app:dev`
+
+Or using docker-compose:
+`docker-compose build`
+`docker-compose up`
+
+2. Production
+`docker build --target production --platform linux/amd64 --tag todo-app:prod .`
+`docker run --env-file ./.env -p 127.0.0.1:5000:5000 todo-app:prod`
+
+3. Testing
+`docker build --target test --platform linux/amd64 --tag todo-app:test .`
+`docker run --env-file ./.env todo-app:test`
+
+Confirm the app is running by either curling the url from the terminal:
+`curl 127.0.0.1:5000`
+or by visiting the url in your browser.
