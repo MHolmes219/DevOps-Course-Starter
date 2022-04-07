@@ -15,7 +15,7 @@ EXPOSE 5000
 FROM base as development
 
 RUN poetry install
-CMD ["poetry", "run", "flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT ["poetry", "run", "flask", "run", "--host=0.0.0.0"]
 
 FROM base as production
 
