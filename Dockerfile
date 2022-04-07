@@ -1,28 +1,31 @@
 FROM python:3.8 as base
 
-WORKDIR /app
-
 ENV PYTHONPATH=${PYTHONPATH}:${PWD} 
 
-COPY ./todo_app /app/todo_app
-COPY ./tests /app/tests
-COPY poetry.lock pyproject.toml gunicorn_starter.sh /app
+WORKDIR /app
+
+COPY poetry.lock pyproject.toml /app
 
 RUN pip3 install poetry
 
-EXPOSE 5000
+EXPOSE 5001
+
+RUN poetry install
+
+COPY ./todo_app /app/todo_app
 
 FROM base as development
 
-RUN poetry install
-ENTRYPOINT ["poetry", "run", "flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT ["poetry", "run", "flask", "run", "--host", "0.0.0.0", "--port", "5001"]
 
 FROM base as production
 
-RUN poetry install --no-dev
+COPY gunicorn_starter.sh /app
+RUN chmod +x /var/log
+
 ENTRYPOINT ["./gunicorn_starter.sh"]
 
 FROM base as test
 
-RUN poetry install
+COPY ./tests /app/tests
 ENTRYPOINT ["poetry", "run", "pytest"]

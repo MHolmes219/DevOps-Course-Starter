@@ -6,7 +6,7 @@ services:
       context: .
       target: development
     ports:
-      - "127.0.0.1:5000:5000"
+      - "5001:5000"
     volumes:
       - ./todo_app:/app/todo_app
     env_file: .env
