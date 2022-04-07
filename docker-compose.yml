@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  todo_app:
+    image: python:3.8
+    build:
+      context: .
+      target: development
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./todo_app:/app/todo_app
+    env_file: .env
