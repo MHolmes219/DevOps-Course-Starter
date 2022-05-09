@@ -1,0 +1,12 @@
+@startuml
+title ToDo App with Trello
+
+User -> Browser : request
+Browser -> Docker : request
+Docker -> Flask : request
+Flask -> Trello : request
+Flask <-- Trello : response
+Docker <-- Flask : response
+Browser <-- Docker : response
+User <-- Browser : response
+@enduml
