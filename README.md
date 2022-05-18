@@ -93,3 +93,85 @@ Or using docker-compose:
 Confirm the app is running by either curling the url from the terminal:
 `curl 127.0.0.1:5001`
 or by visiting the url in your browser.
+
+
+# Documentation
+
+## PlantUML
+
+This can be used to document various diagrams, such as sequence diagrams, class diagrams, object diagrams and component diagrams. In this case, the diagram is to document a sequence.
+
+```
+@startuml
+title ToDo App with Trello
+
+User -> Browser : request
+Browser -> Docker : request
+Docker -> Flask : request
+Flask -> Trello : request
+Flask <- Trello : response
+Docker <- Flask : response
+Browser <- Docker : response
+User <- Browser : response
+@enduml
+```
+
+PlantUML files always declare a `@startuml` and `@enduml` to define the declarations for the diagram.
+
+It's possible to use either `-->` or `->` to define an arrow. The double dash represents a dotted line, where as the single dash represents a solid line. `->` represents a "request" sequence, where as `<-` represents a response sequence.
+
+The list and sequence of lines defines the order of which the entries will display, unless the order keyword is defined, like so:
+
+```
+participant Last 30
+participant Middle 20
+participant First 10
+```
+
+It's possible to make adjustments to arrows and colours of boxes, or arrows, to make the diagram more readable.
+
+This can be done like so:
+
+```
+Alice -[#red]-> Bob : ok
+```
+
+It's possible to group messaging to suggest containerisation or nested elements.
+
+```
+@startuml
+Alice -> Bob: Authentication Request
+alt successful case
+    Bob -> Alice: Authentication Accepted
+else some kind of failure
+    Bob -> Alice: Authentication Failure
+    group My own label
+    Alice -> Log : Log attack start
+        loop 1000 times
+            Alice -> Bob: DNS Attack
+        end
+    Alice -> Log : Log attack end
+    end
+else Another type of failure
+   Bob -> Alice: Please repeat
+end @enduml
+```
+
+You can add notes to add further explanation of steps within your diagram:
+
+```
+@startuml
+Alice->Bob : hello
+note left: this is a first note
+Bob->Alice : ok
+note right: this is another note
+Bob->Bob : I am thinking
+note left
+a note
+can also be defined
+on several lines
+end note
+@enduml
+```
+
+For further guides and syntax, check out the official plantuml guide: https://plantuml.com/guide
