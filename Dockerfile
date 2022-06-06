@@ -4,7 +4,7 @@ ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
 WORKDIR /app
 
-COPY poetry.lock pyproject.toml /app
+COPY poetry.lock pyproject.toml /app/
 
 RUN pip3 install poetry
 
