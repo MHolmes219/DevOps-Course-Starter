@@ -1,0 +1,24 @@
+name: Continuous Integration
+on: 
+  push:
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'documentation'
+  pull_request_review:
+    types:
+      - submitted
+  schedule:
+    - cron:  '30 17 * * *'
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout files 
+        uses: actions/checkout@v2
+      - name: Build docker
+        run: docker build --target test --platform linux/amd64 --tag todo-app:test .
+      - name: Run tests
+        run: docker run --env-file ./.env.test todo-app:test

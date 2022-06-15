@@ -1,5 +1,7 @@
 # DevOps Apprenticeship: Project Exercise
 
+[![.github/workflows/exercise7-pipeline.yaml](https://github.com/MHolmes219/DevOps-Course-Starter/actions/workflows/exercise7-pipeline.yaml/badge.svg)](https://github.com/MHolmes219/DevOps-Course-Starter/actions/workflows/exercise7-pipeline.yaml)
+
 ## System Requirements
 
 The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your system, ensure you have an official distribution of Python version 3.7+ and install Poetry using one of the following commands (as instructed by the [poetry documentation](https://python-poetry.org/docs/#system-requirements)):
