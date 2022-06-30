@@ -38,4 +38,29 @@ jobs:
         run: docker build --target production --tag ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }} .
       - name: Push to docker hub
         run: docker push ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }}
+      - name: Heroku login credentials
+        run: |
+          cat > ~/.netrc <<EOF
+            machine api.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+            machine git.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          EOF
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+      - name: Add Heroku remote
+        run: heroku git:remote --app $HEROKU_APP_NAME
+        env:
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      - name: Push to Heroku
+        run: git push heroku main
+      - name: Tag for heroku
+        run: docker tag ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }} registry.heroku.com/mh-todo-app/web
+      - name: Push to heroku
+        run: docker push registry.heroku.com/mh-todo-app/web
+      - name: Release heroku
+        run: heroku container:release web
     needs: build
