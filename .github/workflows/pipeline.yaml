@@ -55,8 +55,8 @@ jobs:
         run: heroku git:remote --app $HEROKU_APP_NAME
         env:
           HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      - name: Push to Heroku
-        run: git push heroku main
+      - name: Login into Heroku's registry
+        run: heroku container:login
       - name: Tag for heroku
         run: docker tag ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }} registry.heroku.com/mh-todo-app/web
       - name: Push to heroku
