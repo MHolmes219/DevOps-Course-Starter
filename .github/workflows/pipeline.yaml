@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build docker
-        run: docker build --target production --tag ${{ $GITHUB_SHA }} .
+        run: docker build --target production --tag ${{ $env:GITHUB_SHA }} .
       - name: Push to docker hub
-        run: docker push ${{ $GITHUB_SHA }}
+        run: docker push ${{ $env:GITHUB_SHA }}
     needs: build
