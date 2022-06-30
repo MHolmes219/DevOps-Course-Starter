@@ -22,11 +22,22 @@ jobs:
         run: docker build --target test --platform linux/amd64 --tag todo-app:test .
       - name: Run tests
         run: docker run --env-file ./.env.test todo-app:test
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
   publish:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
     steps:
-      - name: test
-        run: echo "Publishing!"
+      - name: Build docker
+        run: docker build --target production --tag ${{ $GITHUB_SHA }} .
+      - name: Push to docker hub
+        run: docker push ${{ $GITHUB_SHA }}
     needs: build
