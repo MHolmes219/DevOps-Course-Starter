@@ -27,10 +27,6 @@ jobs:
     name: Push to docker hub
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -38,10 +34,8 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Checkout files 
         uses: actions/checkout@v2
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          target: production
-          tags: user/todo-app:prod-${{ github.sha }}
+      - name: Build docker
+        run: docker build --target production --tag todo-app:prod-${{ github.sha }} .
+      - name: Push to docker hub
+        run: docker push todo-app:prod-${{ github.sha }}
     needs: build
