@@ -22,24 +22,22 @@ jobs:
         run: docker build --target test --platform linux/amd64 --tag todo-app:test .
       - name: Run tests
         run: docker run --env-file ./.env.test todo-app:test
-  login:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
   publish:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/exercise-8')
     name: Push to docker hub
     runs-on: ubuntu-latest
     steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Checkout files 
         uses: actions/checkout@v2
-      - name: Build docker
-        run: docker build --target production --tag todo-app:prod-${{ github.sha }} .
-      - name: Push to docker hub
-        run: docker push todo-app:prod-${{ github.sha }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          target: production
+          tags: user/todo-app:prod-${{ github.sha }}
     needs: build
