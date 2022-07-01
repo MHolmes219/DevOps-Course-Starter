@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: docker run --env-file ./.env.test todo-app:test
   publish:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/exercise-8')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
     steps:
