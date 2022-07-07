@@ -4,13 +4,13 @@ ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
 WORKDIR /app
 
-COPY poetry.lock pyproject.toml /app/
-
 RUN pip3 install poetry
+COPY poetry.lock pyproject.toml /app/
+RUN chmod a+x /app/pyproject.toml
 
 EXPOSE 5001
 
-RUN poetry install
+RUN poetry config virtualenvs.create false --local && poetry install
 
 COPY ./todo_app /app/todo_app
 
