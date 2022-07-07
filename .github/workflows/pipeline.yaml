@@ -58,11 +58,11 @@ jobs:
       - name: Login into Heroku's registry
         run: heroku container:login
       - name: Tag for heroku
-        run: docker tag ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }} registry.heroku.com/${{ HEROKU_APP_NAME }}/web
+        run: docker tag ${{ secrets.DOCKER_HUB_ACCESS_USER }}/todo-app:prod-${{ github.sha }} registry.heroku.com/$HEROKU_APP_NAME/web
         env:
           HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       - name: Push to heroku
-        run: docker push registry.heroku.com/${{ HEROKU_APP_NAME }}/web
+        run: docker push registry.heroku.com/$HEROKU_APP_NAME/web
         env:
           HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       - name: Release heroku
