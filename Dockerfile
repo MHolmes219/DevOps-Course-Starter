@@ -4,10 +4,9 @@ ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
 WORKDIR /app
 
+RUN pip3 install poetry
 COPY poetry.lock pyproject.toml /app/
 RUN chmod a+x /app/pyproject.toml
-
-RUN pip3 install poetry
 
 EXPOSE 5001
 
