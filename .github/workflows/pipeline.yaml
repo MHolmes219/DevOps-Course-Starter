@@ -40,7 +40,7 @@ jobs:
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
-        run: docker build --target production --tag /todo-app:prod-${{ github.sha }} .
+        run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }} .
       - name: Push to docker hub
         run: docker push $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }}
       - name: Heroku login credentials
