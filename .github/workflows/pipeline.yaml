@@ -24,7 +24,6 @@ jobs:
         run: docker run --env-file ./.env.test todo-app:test
   publish:
     env:
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
       AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
     # if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
@@ -39,9 +38,9 @@ jobs:
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
-        run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }} .
+        run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:prod-latest .
       - name: Push to docker hub
-        run: docker push $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }}
+        run: docker push $DOCKER_HUB_USER/todo-app:prod-latest
       - name: Re-pull and restart the app in azure
         run: curl -dH -X POST 'https://\$mh-todo-app-2022:$AZURE_PASSWORD@mh-todo-app-2022.scm.azurewebsites.net/api/registry/webhook'
     needs: build
