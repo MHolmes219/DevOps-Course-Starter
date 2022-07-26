@@ -26,7 +26,7 @@ jobs:
     env:
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
       AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-    # if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
     steps:
