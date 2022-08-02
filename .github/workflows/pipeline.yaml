@@ -24,10 +24,8 @@ jobs:
         run: docker run --env-file ./.env.test todo-app:test
   publish:
     env:
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+      AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
@@ -40,27 +38,9 @@ jobs:
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
-        run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }} .
+        run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:prod-latest .
       - name: Push to docker hub
-        run: docker push $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }}
-      - name: Heroku login credentials
-        run: |
-          cat > ~/.netrc <<EOF
-            machine api.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-            machine git.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-          EOF
-      - name: Add Heroku remote
-        run: heroku git:remote --app $HEROKU_APP_NAME
-      - name: Login into Heroku's registry
-        run: heroku container:login
-      - name: Tag for heroku
-        run: docker tag $DOCKER_HUB_USER/todo-app:prod-${{ github.sha }} registry.heroku.com/$HEROKU_APP_NAME/web
-      - name: Push to heroku
-        run: docker push registry.heroku.com/$HEROKU_APP_NAME/web
-      - name: Release heroku
-        run: heroku container:release web
+        run: docker push $DOCKER_HUB_USER/todo-app:prod-latest
+      - name: Re-pull and restart the app in azure
+        run: curl -dH -X POST 'https://\$mh-todo-app-2022:$AZURE_PASSWORD@mh-todo-app-2022.scm.azurewebsites.net/api/registry/webhook' --fail
     needs: build
