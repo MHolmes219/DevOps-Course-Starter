@@ -11,3 +11,6 @@ class Config:
         self.API_KEY = os.environ.get('API_KEY')
         self.API_TOKEN = os.environ.get('API_TOKEN')
         self.BOARD_ID = os.environ.get('BOARD_ID')
+
+        self.ENDPOINT = os.environ.get('ENDPOINT')
+        self.DATABASE = os.environ.get('DATABASE')

@@ -17,7 +17,7 @@
     {% set badge_style = 'badge-primary' %}
   {% endif %}
 
-  <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ item.status }}{{ ' | Due: ' + item.due | formatted_time if item.due else '' }}</span>
+  <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ item.status }}{{ ' | Due: ' + item.due if item.due else '' }}</span>
   {% if item.status == 'Done' %}
   <form id="remove-card" method="post" action="/undo-card/{{ item.id }}">
     <button type="submit" class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="right" title="Mark as to-do?">Start over</button>
@@ -31,8 +31,8 @@
     <button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="right" title="Mark as complete?">Complete</button>
   </form>
   {% endif %}
-  <form id="archive-card" method="post" action="/archive-card/{{ item.id }}">
-    <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Archive?"><i class="bi bi-x-circle"></i></button>
+  <form id="delete-card" method="post" action="/delete-card/{{ item.id }}">
+    <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Delete?"><i class="bi bi-x-circle"></i></button>
   </form>
 </li>
 {%- endmacro %}
