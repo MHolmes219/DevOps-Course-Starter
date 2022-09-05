@@ -15,11 +15,6 @@ def __get_database():
     database = database[app.config['DATABASE']]
     return database
 
-def __get_list_collection():
-    database = __get_database()
-    lists = database.lists
-    return lists
-
 def __get_card_collection():
     database = __get_database()
     cards = database.cards
@@ -45,33 +40,6 @@ class Item:
     def modified_today(self):
         today = date.today()
         return self.last_modified == today.strftime("%Y-%m-%d")
-        
-
-def get_lists():
-    """
-    Fetch all lists for board
-    Returns:
-        list: The list of board lists (To Do, In Progress, Done, etc)
-    """
-    lists = __get_list_collection()
-
-    allLists = []
-    for list in lists.find():
-        allLists.append(list)
-
-    return allLists
-
-
-def get_list(listName):
-    """
-    Fetches the list with the specified name.
-
-    Args:
-        name: The name of the list.
-    """
-    lists = get_lists()
-    return next((list for list in lists if list['name'] == listName), None)
-
 
 def get_cards():
     """
@@ -185,7 +153,7 @@ def update_card_list(cardId, list):
 
     cards = __get_card_collection()
 
-    response = cards.update_one({'_id': ObjectId(cardId)}, {'$set': {'list': list}})
+    response = cards.update_one({'_id': ObjectId(cardId)}, {'$set': {'list': list, 'dateLastActivity': datetime.datetime.utcnow()}})
 
     return response
 
