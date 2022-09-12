@@ -6,7 +6,7 @@ from pytest_freezegun import pytest
 
 @pytest.fixture
 def current_date():
-    return date.today().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    return date.today()
 
 @pytest.mark.freeze_time('2022-02-08')
 def test_return_to_do_items(current_date):
@@ -104,7 +104,7 @@ def test_completed_only_items_last_modified_today(current_date):
 @pytest.mark.freeze_time('2022-02-08')
 def test_completed_only_items_last_modified_before_today(current_date):
 
-    yesterday = date(2022, 2, 7).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    yesterday = date(2022, 2, 7)
 
     items = [
         Item(1, 'Done Yesterday', yesterday, 'Description', "2022-02-08T17:36:12.1345Z", 'Done'),
