@@ -2,11 +2,21 @@ from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from todo_app.data import trello_items as items
 from todo_app.view_model import ViewModel
 from todo_app.flask_config import Config, get_access_token, get_user_data
-from flask_login import LoginManager, login_required, UserMixin, login_user
+from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
+from functools import wraps
 
 class User(UserMixin):
-        def __init__(self, id):
-            self.id = id
+    def __init__(self, id):
+        self.id = id
+    
+    @property
+    def role(self):
+        print(id)
+        if self.id == '94120411':
+            return "writer"
+        else:
+            return "reader"
+
 
 def create_app():
 
@@ -59,6 +69,10 @@ def create_app():
     @app.route('/add-card', methods=["POST"])
     @login_required
     def new_card():
+
+        if current_user.role != "writer":
+            return "Forbidden", 403
+
         name = request.form.get('name')
         desc = request.form.get('desc')
         due = request.form.get('due-date')
@@ -80,6 +94,10 @@ def create_app():
     @app.route('/start-card/<cardId>', methods=["POST"])
     @login_required
     def start_card(cardId):
+
+        if current_user.role != "writer":
+            return "Forbidden", 403
+
         items.start_card(cardId)
 
         return redirect(url_for('index'))
@@ -89,6 +107,10 @@ def create_app():
     @app.route('/complete-card/<cardId>', methods=["POST"])
     @login_required
     def complete_card(cardId):
+
+        if current_user.role != "writer":
+            return "Forbidden", 403
+
         items.complete_card(cardId)
 
         return redirect(url_for('index'))
@@ -98,6 +120,10 @@ def create_app():
     @app.route('/undo-card/<cardId>', methods=["POST"])
     @login_required
     def undo_card(cardId):
+
+        if current_user.role != "writer":
+            return "Forbidden", 403
+
         items.undo_card(cardId)
 
         return redirect(url_for('index'))
@@ -107,6 +133,10 @@ def create_app():
     @app.route('/delete-card/<cardId>', methods=["POST"])
     @login_required
     def delete_card(cardId):
+
+        if current_user.role != "writer":
+            return "Forbidden", 403
+            
         items.delete_card(cardId)
 
         return redirect(url_for('index'))
