@@ -3,7 +3,6 @@ from todo_app.data import trello_items as items
 from todo_app.view_model import ViewModel
 from todo_app.flask_config import Config, get_access_token, get_user_data
 from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
-from functools import wraps
 
 class User(UserMixin):
     def __init__(self, id):
