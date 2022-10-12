@@ -1,8 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, Blueprint, session
 from todo_app.data import trello_items as items
 from todo_app.view_model import ViewModel
-from todo_app.flask_config import Config, get_access_token, get_user_data
+from todo_app.flask_config import Config
+from todo_app.oauth_helpers import UserAccess
 from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
+import string, random
+
+
+def user_authorised(func):
+    '''Check user role access'''
+
+    def auth_wrapper(*args, **kwargs):
+        print(f'Function: {func.__name__}')
+        print(f'{"-"*30}')
+        if current_user.role != "writer":
+            return "Forbidden", 403
+        func(*args, **kwargs)
+        return func(*args, **kwargs)
+    auth_wrapper.__name__ = func.__name__
+    return auth_wrapper
 
 class User(UserMixin):
     def __init__(self, id):
@@ -10,7 +26,6 @@ class User(UserMixin):
     
     @property
     def role(self):
-        print(id)
         if self.id == '94120411':
             return "writer"
         else:
@@ -26,7 +41,10 @@ def create_app():
 
     @login_manager.unauthorized_handler
     def unauthenticated():
-        return redirect('https://github.com/login/oauth/authorize?client_id=' + app.config['CLIENT_ID'] + '&state=' + app.config['STATE'])
+        state = string.digits
+        stateString = ''.join(random.choice(state) for i in range(20))
+        session['user-state'] = stateString
+        return redirect('https://github.com/login/oauth/authorize?client_id=' + app.config['CLIENT_ID'] + '&state=' + stateString)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -39,15 +57,18 @@ def create_app():
     def login_callback():
         """Authenticate the user and displays their data."""
         args = request.args
+        returedState = args.get('state')
+        sessionState = session.get('user-state')
         request_token = args.get('code')
 
         CLIENT_ID = app.config['CLIENT_ID']
         CLIENT_SECRET = app.config['CLIENT_SECRET']
-        access_token = get_access_token(CLIENT_ID, CLIENT_SECRET, request_token)
+        access_token = UserAccess.get_access_token(CLIENT_ID, CLIENT_SECRET, request_token)
 
-        user_data = get_user_data(access_token)
+        user_data = UserAccess.get_user_data(access_token)
 
-        login_user(User(user_data['id']))
+        if returedState == sessionState:
+            login_user(User(user_data['id']))
 
         return redirect(url_for('index'))
 
@@ -67,10 +88,8 @@ def create_app():
     # Add a new card to the list
     @app.route('/add-card', methods=["POST"])
     @login_required
+    @user_authorised
     def new_card():
-
-        if current_user.role != "writer":
-            return "Forbidden", 403
 
         name = request.form.get('name')
         desc = request.form.get('desc')
@@ -92,10 +111,8 @@ def create_app():
     # Update card status to In Progress
     @app.route('/start-card/<cardId>', methods=["POST"])
     @login_required
+    @user_authorised
     def start_card(cardId):
-
-        if current_user.role != "writer":
-            return "Forbidden", 403
 
         items.start_card(cardId)
 
@@ -105,10 +122,8 @@ def create_app():
     # Update card status to Done
     @app.route('/complete-card/<cardId>', methods=["POST"])
     @login_required
+    @user_authorised
     def complete_card(cardId):
-
-        if current_user.role != "writer":
-            return "Forbidden", 403
 
         items.complete_card(cardId)
 
@@ -118,10 +133,8 @@ def create_app():
     # Update card status to To Do
     @app.route('/undo-card/<cardId>', methods=["POST"])
     @login_required
+    @user_authorised
     def undo_card(cardId):
-
-        if current_user.role != "writer":
-            return "Forbidden", 403
 
         items.undo_card(cardId)
 
@@ -131,10 +144,8 @@ def create_app():
     # Delete card
     @app.route('/delete-card/<cardId>', methods=["POST"])
     @login_required
+    @user_authorised
     def delete_card(cardId):
-
-        if current_user.role != "writer":
-            return "Forbidden", 403
             
         items.delete_card(cardId)
 
