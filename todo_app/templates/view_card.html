@@ -22,20 +22,22 @@
     <div class="col-md-6">
       <a href="/" class="btn btn-link">&larr; Go back</a>
     </div>
-    <div class="col-md-6 d-flex justify-content-end">
-      {% if c.status == 'To Do' or c.status == 'Complete' %}
-      <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c._id }}">
-        <button type="submit" class="btn btn-secondary">Mark as in progress</button>
-      </form>
-      <form class="mr-3" id="delete-card" method="post" action="/delete-card/{{ c._id }}">
-        <button type="submit" class="btn btn-outline-info">Delete</button>
-      </form>
-      {% else %}
-      <form id="complete-card" method="post" action="/complete-card/{{ c._id }}">
-        <button type="submit" class="btn btn-primary">Mark as complete</button>
-      </form>
-      {% endif %}
-    </div>
+    {% if current_user.role == "writer" %}
+      <div class="col-md-6 d-flex justify-content-end">
+        {% if c.status == 'To Do' or c.status == 'Complete' %}
+        <form class="mr-3" id="start-card" method="post" action="/start-card/{{ c._id }}">
+          <button type="submit" class="btn btn-secondary">Mark as in progress</button>
+        </form>
+        <form class="mr-3" id="delete-card" method="post" action="/delete-card/{{ c._id }}">
+          <button type="submit" class="btn btn-outline-info">Delete</button>
+        </form>
+        {% else %}
+        <form id="complete-card" method="post" action="/complete-card/{{ c._id }}">
+          <button type="submit" class="btn btn-primary">Mark as complete</button>
+        </form>
+        {% endif %}
+      </div>
+    {% endif %}
     {% endfor %}
     {% endif %}
   </div>

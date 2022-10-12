@@ -18,22 +18,24 @@
   {% endif %}
 
   <span class="badge badge-pill mr-3 ml-auto {{ badge_style }}">{{ item.status }}{{ ' | Due: ' + item.due if item.due else '' }}</span>
-  {% if item.status == 'Done' %}
-  <form id="remove-card" method="post" action="/undo-card/{{ item.id }}">
-    <button type="submit" class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="right" title="Mark as to-do?">Start over</button>
-  </form>
-  {% elif item.status == 'To Do' %}
-    <form id="start-card" method="post" action="/start-card/{{ item.id }}">
-      <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="right" title="Mark as in progress?">Start</button>
+  {% if current_user.role == "writer" %}
+    {% if item.status == 'Done' %}
+    <form id="remove-card" method="post" action="/undo-card/{{ item.id }}">
+      <button type="submit" class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="right" title="Mark as to-do?">Start over</button>
     </form>
-  {% else %}
-  <form id="complete-card" method="post" action="/complete-card/{{ item.id }}">
-    <button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="right" title="Mark as complete?">Complete</button>
-  </form>
+    {% elif item.status == 'To Do' %}
+      <form id="start-card" method="post" action="/start-card/{{ item.id }}">
+        <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="right" title="Mark as in progress?">Start</button>
+      </form>
+    {% else %}
+    <form id="complete-card" method="post" action="/complete-card/{{ item.id }}">
+      <button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="right" title="Mark as complete?">Complete</button>
+    </form>
+    {% endif %}
+    <form id="delete-card" method="post" action="/delete-card/{{ item.id }}">
+      <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Delete?"><i class="bi bi-x-circle"></i></button>
+    </form>
   {% endif %}
-  <form id="delete-card" method="post" action="/delete-card/{{ item.id }}">
-    <button type="submit" class="btn btn-link btn-lg" data-toggle="tooltip" data-placement="right" title="Delete?"><i class="bi bi-x-circle"></i></button>
-  </form>
 </li>
 {%- endmacro %}
 
@@ -64,21 +66,23 @@
     <p class="lead">Just another to-do app.</p>
   </div>
 
-  <div class="row py-3 mx-0 mb-4 bg-light border-top border-bottom">
-    <div class="container">
-      <h5>Add a new card</h5>
-      <form id="new-card" method="post" action="/add-card">
-        <div class="input-group">
-          <input type="text" name="name" id="name" class="form-control" required placeholder="Card name">
-          <input type="text" name="desc" id="desc" class="form-control" placeholder="Card description">
-          <input type="text" name="due-date" id="due-date" class="form-control" placeholder="Due date" data-provide="datepicker">
-          <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">Create card</button>
+  {% if current_user.role == "writer" %}
+    <div class="row py-3 mx-0 mb-4 bg-light border-top border-bottom">
+      <div class="container">
+        <h5>Add a new card</h5>
+        <form id="new-card" method="post" action="/add-card">
+          <div class="input-group">
+            <input type="text" name="name" id="name" class="form-control" required placeholder="Card name">
+            <input type="text" name="desc" id="desc" class="form-control" placeholder="Card description">
+            <input type="text" name="due-date" id="due-date" class="form-control" placeholder="Due date" data-provide="datepicker">
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-primary">Create card</button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
+  {% endif %}
   
   {{ show_item_list('To Do', view_model.to_do_items, 'to-do-section') }}
   {{ show_item_list('In Progress', view_model.in_progress_items, 'in-progress-section') }}
