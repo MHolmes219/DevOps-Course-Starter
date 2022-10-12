@@ -5,19 +5,19 @@ from todo_app.flask_config import Config
 from todo_app.oauth_helpers import UserAccess
 from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
 import string, random
+from functools import wraps
 
 
 def user_authorised(func):
     '''Check user role access'''
 
+    @wraps(func)
     def auth_wrapper(*args, **kwargs):
         print(f'Function: {func.__name__}')
         print(f'{"-"*30}')
         if current_user.role != "writer":
             return "Forbidden", 403
-        func(*args, **kwargs)
         return func(*args, **kwargs)
-    auth_wrapper.__name__ = func.__name__
     return auth_wrapper
 
 class User(UserMixin):
