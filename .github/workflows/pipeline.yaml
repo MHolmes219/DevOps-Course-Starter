@@ -25,10 +25,10 @@ jobs:
   publish:
     env:
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
-      AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
       TF_VAR_client_id: ${{ secrets.TF_VAR_CLIENT_ID }}
       TF_VAR_client_secret: ${{ secrets.TF_VAR_CLIENT_SECRET }}
       TF_VAR_secret_key: ${{ secrets.TF_VAR_SECRET_KEY }}
+      TF_VAR_arm_client_secret: ${{ secrets.TF_VAR_ARM_CLIENT_SECRET }}
     # if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest

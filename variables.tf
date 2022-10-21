@@ -11,3 +11,8 @@ variable "secret_key" {
     description = "The secret key value"
     sensitive = true
 }
+
+variable "arm_client_secret" {
+  description = "The client secret value for azure connection"
+  sensitive = true
+}
