@@ -177,3 +177,14 @@ end note
 ```
 
 For further guides and syntax, check out the official plantuml guide: https://plantuml.com/guide
+
+
+### Terraform deployment and destroy
+
+```
+terraform plan -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY" -out terraform.tfplan
+```
+
+```
+terraform destroy -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY"
+```
