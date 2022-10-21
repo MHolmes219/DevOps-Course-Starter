@@ -26,6 +26,9 @@ jobs:
     env:
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
       AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+      TF_VAR_client_id: ${{ secrets.TF_VAR_CLIENT_ID }}
+      TF_VAR_client_secret: ${{ secrets.TF_VAR_CLIENT_SECRET }}
+      TF_VAR_secret_key: ${{ secrets.TF_VAR_SECRET_KEY }}
     # if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
@@ -53,7 +56,7 @@ jobs:
       - name: Terraform init
         run: terraform init
       - name: Deploy app with terraform
-        run: terraform apply -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" -var "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" -var "secret_key=${{ secrets.SECRET_KEY }}" -auto-approve
+        run: terraform apply -auto-approve
       - name: Re-pull and restart the app in azure
         run: curl -dH -X POST "$(terraform output -raw cd_webhook)" --fail
     needs: build
