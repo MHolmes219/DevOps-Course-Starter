@@ -35,12 +35,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - uses: azure/login@v1
+      - name: Login to azure
+        uses: azure/login@v1
         with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - name: 'Run Azure CLI commands'
+        run: |
+          az account show
+          az group list
+          pwd 
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
