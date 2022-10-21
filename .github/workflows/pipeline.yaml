@@ -35,6 +35,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
@@ -44,7 +47,7 @@ jobs:
       - name: Terraform init
         run: terraform init
       - name: Deploy app with terraform
-        run: terraform apply -var "client_id=$AZURE_CLIENT_ID" -var "client_secret=$AZURE_CLIENT_SECRET" -var "secret_key=$SECRET_KEY"
+        run: terraform apply -var "client_id=$AZURE_CLIENT_ID" -var "client_secret=$AZURE_CLIENT_SECRET" -var "secret_key=$SECRET_KEY" -auto-approve
       - name: Re-pull and restart the app in azure
         run: curl -dH -X POST "$(terraform output -raw cd_webhook)" --fail
     needs: build
