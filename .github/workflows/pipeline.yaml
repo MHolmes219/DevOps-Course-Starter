@@ -43,6 +43,8 @@ jobs:
         run: docker push $DOCKER_HUB_USER/todo-app:latest
       - name: Terraform init
         run: terraform init
+      - name: Deploy app with terraform
+        run: terraform apply -var "client_id=$AZURE_CLIENT_ID" -var "client_secret=$AZURE_CLIENT_SECRET" -var "secret_key=$SECRET_KEY"
       - name: Re-pull and restart the app in azure
-        run: curl -dH -X POST "https://\$mh-todo-app-2022:$AZURE_PASSWORD@mh-todo-app-2022.scm.azurewebsites.net/api/registry/webhook" --fail
+        run: curl -dH -X POST "$(terraform output -raw cd_webhook)" --fail
     needs: build
