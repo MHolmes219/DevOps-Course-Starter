@@ -2,7 +2,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "OpenCohort21_MatthewHolmes_ProjectExercise"
-    storage_account_name = "tfstate28792"
+    storage_account_name = "tfstatev97g4"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
   }
@@ -35,14 +35,8 @@ resource "random_string" "resource_code" {
   upper   = false
 }
 
-resource "azurerm_storage_container" "main" {
-  name                  = "tfstate"
-  storage_account_name  = azurerm_storage_account.main.name
-  container_access_type = "blob"
-}
-
 resource "azurerm_service_plan" "main" {
-  name                = "terraformed-asp"
+  name                = "mh-terraformed-asp"
   location            = data.azurerm_resource_group.main.location
   resource_group_name = data.azurerm_resource_group.main.name
   os_type             = "Linux"
@@ -75,7 +69,7 @@ resource "azurerm_linux_web_app" "main" {
 
 resource "azurerm_cosmosdb_account" "main" {
 
-  name                = "mh-module-12-todoapp"
+  name                = "matth-module-12-todoapp"
   location            = data.azurerm_resource_group.main.location
   resource_group_name = data.azurerm_resource_group.main.name
   offer_type          = "Standard"
