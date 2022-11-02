@@ -179,12 +179,16 @@ end note
 For further guides and syntax, check out the official plantuml guide: https://plantuml.com/guide
 
 
-### Terraform deployment and destroy
+### Terraform plan and deployment
+#### Create a plan and apply that plan by running the following
 
 ```
 terraform plan -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY" -out terraform.tfplan
+terraform apply "terraform.tfplan"
 ```
 
+### Terraform destroy
+#### Destroy the infrastructure by running the following
 ```
 terraform destroy -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY"
 ```

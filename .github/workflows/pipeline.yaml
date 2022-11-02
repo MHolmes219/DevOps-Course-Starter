@@ -29,6 +29,9 @@ jobs:
       TF_VAR_client_secret: ${{ secrets.TF_VAR_CLIENT_SECRET }}
       TF_VAR_secret_key: ${{ secrets.TF_VAR_SECRET_KEY }}
       TF_VAR_arm_client_secret: ${{ secrets.TF_VAR_ARM_CLIENT_SECRET }}
+      TF_VAR_azure_client_id: ${{ secrets.TF_VAR_AZURE_CLIENT_ID }}
+      TF_VAR_azure_subscription_id: ${{ secrets.TF_VAR_AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_azure_tenant_id: ${{ secrets.TF_VAR_AZURE_TENANT_ID }}
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest

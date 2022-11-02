@@ -1,5 +1,14 @@
 terraform {
+
+  backend "azurerm" {
+    resource_group_name  = "OpenCohort21_MatthewHolmes_ProjectExercise"
+    storage_account_name = "tfstate28792"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+
   required_providers {
+    
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.8"
@@ -10,10 +19,10 @@ terraform {
 provider "azurerm" {
   features {}
 
-  subscription_id = "d33b95c7-af3c-4247-9661-aa96d47fccc0"
-  client_id       = "0568731c-73ad-44fa-89b6-8123ee27d574"
+  subscription_id = var.azure_subscription_id
+  client_id       = var.azure_client_id
   client_secret   = var.arm_client_secret
-  tenant_id       = "7d6f97d6-d755-4c10-b763-409cc4b6638f"
+  tenant_id       = var.azure_tenant_id
 }
 
 data "azurerm_resource_group" "main" {
@@ -24,19 +33,6 @@ resource "random_string" "resource_code" {
   length  = 5
   special = false
   upper   = false
-}
-
-resource "azurerm_storage_account" "main" {
-  name                     = "tfstate${random_string.resource_code.result}"
-  resource_group_name      = data.azurerm_resource_group.main.name
-  location                 = data.azurerm_resource_group.main.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  allow_nested_items_to_be_public = true
-
-  tags = {
-    environment = "production"
-  }
 }
 
 resource "azurerm_storage_container" "main" {
