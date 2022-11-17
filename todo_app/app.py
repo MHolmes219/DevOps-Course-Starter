@@ -61,10 +61,13 @@ def create_app():
 
     if app.config['LOGGLY_TOKEN'] is not None:
         handler = HTTPSHandler(f'https://logs-01.loggly.com/inputs/{app.config["LOGGLY_TOKEN"]}/tag/todo-app')
+        werkzeugHandler = HTTPSHandler(f'https://logs-01.loggly.com/inputs/{app.config["LOGGLY_TOKEN"]}/tag/todo-app-requests')
+
         handler.setFormatter(
             jsonlogger.JsonFormatter("%(asctime)s %(module)s %(levelname)s %(message)s")
         )
-        getLogger('werkzeug').addHandler(HTTPSHandler(f'https://logs-01.loggly.com/inputs/{app.config["LOGGLY_TOKEN"]}/tag/todo-app-requests'))
+        
+        getLogger('werkzeug').addHandler(werkzeugHandler)
         app.logger.addHandler(handler)
 
 
