@@ -25,7 +25,17 @@ jobs:
   publish:
     env:
       DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
-      AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+      TF_VAR_client_id: ${{ secrets.TF_VAR_CLIENT_ID }}
+      TF_VAR_client_secret: ${{ secrets.TF_VAR_CLIENT_SECRET }}
+      TF_VAR_secret_key: ${{ secrets.TF_VAR_SECRET_KEY }}
+      TF_VAR_azure_client_secret: ${{ secrets.TF_VAR_ARM_CLIENT_SECRET }}
+      TF_VAR_azure_client_id: ${{ secrets.TF_VAR_ARM_CLIENT_ID }}
+      TF_VAR_azure_subscription_id: ${{ secrets.TF_VAR_ARM_SUBSCRIPTION_ID }}
+      TF_VAR_azure_tenant_id: ${{ secrets.TF_VAR_ARM_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     name: Push to docker hub
     runs-on: ubuntu-latest
@@ -35,12 +45,26 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_ACCESS_USER }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Login to azure
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - name: 'Run Azure CLI commands'
+        run: |
+          az account show
+          az group list
+          pwd 
       - name: Checkout files 
         uses: actions/checkout@v2
       - name: Build docker
         run: docker build --target production --tag $DOCKER_HUB_USER/todo-app:latest .
       - name: Push to docker hub
         run: docker push $DOCKER_HUB_USER/todo-app:latest
+      - name: Terraform init
+        run: |
+          terraform init
+      - name: Deploy app with terraform
+        run: terraform apply -auto-approve
       - name: Re-pull and restart the app in azure
-        run: curl -dH -X POST "https://\$mh-todo-app-2022:$AZURE_PASSWORD@mh-todo-app-2022.scm.azurewebsites.net/api/registry/webhook" --fail
+        run: curl -dH -X POST "$(terraform output -raw cd_webhook)" --fail
     needs: build

@@ -118,3 +118,10 @@ env/
 
 ### Configuration files ###
 .env
+
+### Terraform
+.terraform
+.tfstate
+.tfplan
+.tfstate
+.tfstate.backup
