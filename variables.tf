@@ -12,19 +12,19 @@ variable "secret_key" {
     sensitive = true
 }
 
-variable "azure_client_secret" {
+variable "arm_client_secret" {
   description = "The client secret value for azure connection"
   sensitive = true
 }
 
-variable "azure_client_id" {
+variable "arm_client_id" {
   description = "The client ID for the azure provider"
 }
 
-variable "azure_subscription_id" {
+variable "arm_subscription_id" {
   description = "The subscription ID for the azure provider"
 }
 
-variable "azure_tenant_id" {
+variable "arm_tenant_id" {
   description = "The tenant ID for the azure provider"
 }
