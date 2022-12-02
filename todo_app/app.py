@@ -54,7 +54,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        app.logger.info("User is authenticated and their role is %s", User(user_id).role)
+        app.logger.info("User is authenticated and their role is %s, with ID of %s", User(user_id).role, user_id)
         return User(user_id)
     
     login_manager.init_app(app)
