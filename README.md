@@ -179,6 +179,12 @@ end note
 For further guides and syntax, check out the official plantuml guide: https://plantuml.com/guide
 
 
+### Logging with loggly
+Sign up to loggly and find the icon for Logs. Under this select "Source Setup", then select Customer Tokens to create a new token.
+Add your `LOGGLY_TOKEN` variable to your .env file and add in your loggly token that you've generated.
+
+You can also update the `LOG_LEVEL` of the application and output specific logs, such as DEBUG, INFO, ERROR, WARNING, etc.
+
 ### Terraform plan and deployment
 #### Create a plan and apply that plan by running the following
 
