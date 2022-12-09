@@ -192,3 +192,12 @@ terraform apply "terraform.tfplan"
 ```
 terraform destroy -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY"
 ```
+
+### Run in minikube
+1. Start minikube by running `minikube start`
+2. Run the docker build for prod from the instructions above
+3. Run `minikube image load todo-app:prod`
+4. `kubectl apply -f deployment.yaml`
+5. `kubectl apply -f service-yaml`
+6. `kubectl port-forward service/module-14 7080:5000`
+7. Open http://localhost:7080 in your browser.
