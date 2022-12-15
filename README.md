@@ -179,6 +179,12 @@ end note
 For further guides and syntax, check out the official plantuml guide: https://plantuml.com/guide
 
 
+### Logging with loggly
+Sign up to loggly and find the icon for Logs. Under this select "Source Setup", then select Customer Tokens to create a new token.
+Add your `LOGGLY_TOKEN` variable to your .env file and add in your loggly token that you've generated.
+
+You can also update the `LOG_LEVEL` of the application and output specific logs, such as DEBUG, INFO, ERROR, WARNING, etc.
+
 ### Terraform plan and deployment
 #### Create a plan and apply that plan by running the following
 
@@ -192,6 +198,17 @@ terraform apply "terraform.tfplan"
 ```
 terraform destroy -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secret_key=<SECRET_KEY"
 ```
+
+### Run in minikube
+1. Start minikube by running `minikube start`
+2. Run the docker build for prod from the instructions above
+3. Run `minikube image load todo-app:prod`
+4. `kubectl apply -f deployment.yaml`
+5. `kubectl apply -f service-yaml`
+6. `kubectl port-forward service/module-14 7080:5000`
+7. Open http://localhost:7080 in your browser.
+
+
 ### Logging with loggly
 Sign up to loggly and find the icon for Logs. Under this select "Source Setup", then select Customer Tokens to create a new token.
 Add your `LOGGLY_TOKEN` variable to your .env file and add in your loggly token that you've generated.
