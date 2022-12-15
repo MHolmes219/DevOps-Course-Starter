@@ -6,6 +6,9 @@ from todo_app.oauth_helpers import UserAccess
 from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
 import string, random
 from functools import wraps
+from loggly.handlers import HTTPSHandler
+from pythonjsonlogger import jsonlogger
+from logging import getLogger
 
 
 def user_authorised(func):
@@ -37,6 +40,8 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config())
 
+    app.logger.setLevel(app.config['LOG_LEVEL'])
+
     login_manager = LoginManager()
 
     @login_manager.unauthorized_handler
@@ -44,13 +49,26 @@ def create_app():
         state = string.digits
         stateString = ''.join(random.choice(state) for i in range(20))
         session['user-state'] = stateString
+        app.logger.info("User is unauthenticated")
         return redirect('https://github.com/login/oauth/authorize?client_id=' + app.config['CLIENT_ID'] + '&state=' + stateString)
 
     @login_manager.user_loader
     def load_user(user_id):
+        app.logger.info(f"User is authenticated and their role is {User(user_id).role}, with ID of {user_id}")
         return User(user_id)
     
     login_manager.init_app(app)
+
+    if app.config['LOGGLY_TOKEN'] is not None:
+        handler = HTTPSHandler(f'https://logs-01.loggly.com/inputs/{app.config["LOGGLY_TOKEN"]}/tag/todo-app')
+        werkzeugHandler = HTTPSHandler(f'https://logs-01.loggly.com/inputs/{app.config["LOGGLY_TOKEN"]}/tag/todo-app-requests')
+
+        handler.setFormatter(
+            jsonlogger.JsonFormatter("%(asctime)s %(module)s %(levelname)s %(message)s")
+        )
+        
+        getLogger('werkzeug').addHandler(werkzeugHandler)
+        app.logger.addHandler(handler)
 
 
     @app.route('/login/callback', methods=['GET'])
@@ -105,6 +123,8 @@ def create_app():
     def view_card(cardId):
         card = items.get_card(cardId)
 
+        app.logger.info(f"Current card: {card[0]['name']}")
+
         return render_template('view_card.html', card = card)
 
 
@@ -115,6 +135,8 @@ def create_app():
     def start_card(cardId):
 
         items.start_card(cardId)
+
+        app.logger.info(f'Card {cardId} started')
 
         return redirect(url_for('index'))
 
@@ -127,6 +149,8 @@ def create_app():
 
         items.complete_card(cardId)
 
+        app.logger.info(f'Card {cardId} completed')
+
         return redirect(url_for('index'))
 
 
@@ -138,6 +162,8 @@ def create_app():
 
         items.undo_card(cardId)
 
+        app.logger.info(f'Card {cardId} restarted')
+
         return redirect(url_for('index'))
 
 
@@ -148,6 +174,8 @@ def create_app():
     def delete_card(cardId):
             
         items.delete_card(cardId)
+
+        app.logger.info(f'Card {cardId} deleted')
 
         return redirect(url_for('index'))
 
