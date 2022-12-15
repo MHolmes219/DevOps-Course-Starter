@@ -54,7 +54,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        app.logger.info("User is authenticated and their role is %s, with ID of %s", User(user_id).role, user_id)
+        app.logger.info(f"User is authenticated and their role is {User(user_id).role}, with ID of {user_id}")
         return User(user_id)
     
     login_manager.init_app(app)
@@ -123,7 +123,7 @@ def create_app():
     def view_card(cardId):
         card = items.get_card(cardId)
 
-        app.logger.info("Current card: %s", card[0]['name'])
+        app.logger.info(f"Current card: {card[0]['name']}")
 
         return render_template('view_card.html', card = card)
 
@@ -136,7 +136,7 @@ def create_app():
 
         items.start_card(cardId)
 
-        app.logger.info('Card %s started', cardId)
+        app.logger.info(f'Card {cardId} started')
 
         return redirect(url_for('index'))
 
@@ -149,7 +149,7 @@ def create_app():
 
         items.complete_card(cardId)
 
-        app.logger.info('Card %s completed', cardId)
+        app.logger.info(f'Card {cardId} completed')
 
         return redirect(url_for('index'))
 
@@ -162,7 +162,7 @@ def create_app():
 
         items.undo_card(cardId)
 
-        app.logger.info('Card %s restarted', cardId)
+        app.logger.info(f'Card {cardId} restarted')
 
         return redirect(url_for('index'))
 
@@ -175,7 +175,7 @@ def create_app():
             
         items.delete_card(cardId)
 
-        app.logger.info('Card %s deleted', cardId)
+        app.logger.info(f'Card {cardId} deleted')
 
         return redirect(url_for('index'))
 

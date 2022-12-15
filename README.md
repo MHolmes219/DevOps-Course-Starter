@@ -207,3 +207,10 @@ terraform destroy -var "client_id=<ID>" -var "client_secret=<SECRET>" -var "secr
 5. `kubectl apply -f service-yaml`
 6. `kubectl port-forward service/module-14 7080:5000`
 7. Open http://localhost:7080 in your browser.
+
+
+### Logging with loggly
+Sign up to loggly and find the icon for Logs. Under this select "Source Setup", then select Customer Tokens to create a new token.
+Add your `LOGGLY_TOKEN` variable to your .env file and add in your loggly token that you've generated.
+
+You can also update the `LOG_LEVEL` of the application and output specific logs, such as DEBUG, INFO, ERROR, WARNING, etc.
